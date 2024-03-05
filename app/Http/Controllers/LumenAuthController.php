@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Absen;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class LumenAuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'logout']]);
+        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'logout', 'register']]);
     }
     /**
      * Get a JWT via given credentials.
@@ -17,6 +20,27 @@ class LumenAuthController extends Controller
      * @param  Request  $request
      * @return Response
      */
+
+    public function register(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|string|max:100',
+            'email' => 'required|string|email|unique:users,email',
+            'password' => 'required|string',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        return response()->json([
+            'message' => 'User created successfully',
+            'user' => $user,
+        ]);
+    }
+
     public function login(Request $request)
     {
         $this->validate($request, [
@@ -62,7 +86,8 @@ class LumenAuthController extends Controller
      */
     public function refresh()
     {
-        return $this->jsonResponse(auth()->refresh());
+        return $this->jsonResponse(Auth::refresh());
+        // return $this->jsonResponse(auth()->refresh());
     }
 
     /**
@@ -78,7 +103,14 @@ class LumenAuthController extends Controller
             'access_token' => $token,
             'token_type'   => 'bearer',
             'user'         => auth()->user(),
-            'expires_in'   => auth()->factory()->getTTL() * 60 * 24
+            'expires_in'   => Auth::factory()->getTTL() * 60 * 24
         ]);
+    }
+
+    // data fetch
+    public function allRecord()
+    {
+        $dataAbsen = Absen::all();
+        return response()->json($dataAbsen);
     }
 }
