@@ -18,8 +18,11 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'api'], function () use ($router) {
+    $router->post('register', 'LumenAuthController@register');
     $router->post('login', 'LumenAuthController@login');
     $router->post('logout', 'LumenAuthController@logout');
     $router->post('refresh', 'LumenAuthController@refresh');
     $router->post('me', 'LumenAuthController@me');
+
+    $router->get('allrecord', 'LumenAuthController@allRecord');
 });
