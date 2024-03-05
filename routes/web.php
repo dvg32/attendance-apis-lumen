@@ -16,3 +16,10 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->group(['prefix' => 'api'], function () use ($router) {
+    $router->post('login', 'LumenAuthController@login');
+    $router->post('logout', 'LumenAuthController@logout');
+    $router->post('refresh', 'LumenAuthController@refresh');
+    $router->post('me', 'LumenAuthController@me');
+});
