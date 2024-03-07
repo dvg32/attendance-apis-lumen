@@ -102,7 +102,9 @@ class LumenAuthController extends Controller
         return response()->json([
             'access_token' => $token,
             // 'token_type'   => 'bearer',
-            'user'         => auth()->user(),
+            // 'user'         => auth()->user(),
+            'name' => auth()->user()->name,
+            'email' => auth()->user()->email,
             // 'expires_in'   => Auth::factory()->getTTL() * 60 * 24
         ]);
     }
